@@ -9,14 +9,14 @@ from commandsText.backend import backend
 from commandsText.quotes import mr_robot_quotes
 from utilities.getEmbed import getEmbed
 from getMemes import getMemes
+from scraping.getNews import message
 
 helpVar = help
 programacionVar = programacion
 frontendVar = frontend
 backendVar = backend
-client = discord.Client()
 
-client  = commands.Bot(command_prefix='_', description="Fsociety Bot", help_command=None)
+client = commands.Bot(command_prefix='_', description="Fsociety Bot", help_command=None)
 
 # Check the ping
 @client.command() 
@@ -64,12 +64,25 @@ async def on_message(message):
         await message.channel.send(response)
     await client.process_commands(message)
 
-# Send a meme every 12 hours
-@tasks.loop(hours=12)
+# Send a meme every 5 hours
+@tasks.loop(hours=5)
 async def send_meme():
     message_channel = client.get_channel(874641359242412092)
     await message_channel.send(getMemes())
 @send_meme.before_loop
+async def before():
+    await client.wait_until_ready()
+
+# Send a new every hour
+@tasks.loop(hours=1)
+async def send_new():
+    message_channel = client.get_channel(874641359242412092)
+    messages = await message_channel.history(limit=1).flatten()
+    for i in messages:
+        # Prevent the same news from being sent
+        if(i.content.strip().lower() != message.strip().lower()):
+            await message_channel.send(message)
+@send_new.before_loop
 async def before():
     await client.wait_until_ready()
 
@@ -80,4 +93,5 @@ async def on_ready():
     print("Hello world!")
 
 send_meme.start()
+send_new.start()
 client.run(token)
