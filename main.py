@@ -16,12 +16,12 @@ backendVar = backend
 variables = [helpVar, programacionVar, frontendVar, backendVar]
 client = discord.Client()
 
-client  = commands.Bot(command_prefix='_', description="Bot Fsociety", help_command=None)
+client  = commands.Bot(command_prefix='_', description="Fsociety Bot", help_command=None)
 
 # Check the ping
 @client.command() 
 async def ping(ctx): 
-    await ctx.send('pong')
+    await ctx.send('Pong! in {0}'.format(round(client.latency, 1)) + 'ms')
 
 # Help command
 @client.command()

@@ -3,7 +3,7 @@ help = """
 
     > Prefijo:  _
 
-    > _ping: El bot te responde pong
+    > _ping: Chequea el ping
 
     > _programacion: Ramas de la programación
 

@@ -1,6 +1,5 @@
-# bot-discord
-Bot para discord desarrollado en Python. 
+# Discord bot
 
-Prefijo: _
+Prefix: _
 
-Para ver todos los comandos: _help
+To see all the commands: _help
