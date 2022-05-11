@@ -1,15 +1,17 @@
+from time import sleep
 import discord
 from discord.ext import commands, tasks
 import random
-from variables import (token)
+from utilities.variables import (token)
+from utilities.getEmbed import getEmbed
 from commandsText.help import help
 from commandsText.programacion import programacion
 from commandsText.frontend import frontend
 from commandsText.backend import backend
 from commandsText.quotes import mr_robot_quotes
-from utilities.getEmbed import getEmbed
 from getMemes import getMemes
-from scraping.getNews import message
+from getNews import message
+from getCourses import getCourses
 
 helpVar = help
 programacionVar = programacion
@@ -73,8 +75,8 @@ async def send_meme():
 async def before():
     await client.wait_until_ready()
 
-# Send a new every hour
-@tasks.loop(hours=1)
+# Send news
+@tasks.loop(minutes=5)
 async def send_new():
     message_channel = client.get_channel(874641359242412092)
     messages = await message_channel.history(limit=1).flatten()
@@ -86,12 +88,32 @@ async def send_new():
 async def before():
     await client.wait_until_ready()
 
-# Change bot status
+# Send a free course every 24 minutes
+@tasks.loop(hours=24)
+async def send_course():
+    responseCourse = getCourses()
+    message_channel = client.get_channel(874641359242412092)
+    for res in responseCourse["results"]:
+        freeCourse = f"""
+        **CURSO GRATIS**\n
+        {res["title"]}
+        https://udemy.com{res["url"]}
+        """
+        await message_channel.send(freeCourse)
+        sleep(1440)
+@send_course.before_loop
+async def before():
+    await client.wait_until_ready()
+
+
 @client.event
 async def on_ready():
-    await client.change_presence(activity=discord.Game(name="Hacking..."))
     print("Hello world!")
-
-send_meme.start()
+    # Change bot status
+    await client.change_presence(activity=discord.Game(name="Hacking..."))
+    
+send_course.start()
 send_new.start()
+send_meme.start()
 client.run(token)
+
