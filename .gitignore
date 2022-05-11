@@ -1,2 +1,4 @@
 variables.py
-__pycache__
+__pycache__/
+./commandsText/__pycache__/
+./utilities/__pycache__/
