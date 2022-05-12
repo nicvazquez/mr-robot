@@ -18,9 +18,9 @@ programacionVar = programacion
 frontendVar = frontend
 backendVar = backend
 
-memesChannel = 874641359242412092
-newsChannel = 874641359242412092
-coursesChannel = 874641359242412092
+memesChannel = 866425056938164234
+newsChannel = 974118263640440852
+coursesChannel = 865292924824322138
 
 client = commands.Bot(command_prefix='_', description="Fsociety Bot", help_command=None)
 
