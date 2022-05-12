@@ -18,9 +18,9 @@ programacionVar = programacion
 frontendVar = frontend
 backendVar = backend
 
-memesChannel = 866425056938164234
-newsChannel = 974118263640440852
-coursesChannel = 865292924824322138
+memesChannel = 874641359242412092
+newsChannel = 874641359242412092
+coursesChannel = 874641359242412092
 
 client = commands.Bot(command_prefix='_', description="Fsociety Bot", help_command=None)
 
@@ -93,7 +93,7 @@ async def before():
     await client.wait_until_ready()
 
 # Send a free course every 10 minutes
-@tasks.loop(minutes=10)
+@tasks.loop(seconds=10)
 async def send_course():
     responseCourse = getCourses()
     message_channel = client.get_channel(coursesChannel)
