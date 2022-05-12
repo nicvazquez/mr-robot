@@ -87,12 +87,7 @@ async def send_new():
     for i in messages:
         # Prevent the same news from being sent
         if(i.content.strip().lower() != message.strip().lower()):
-            print("isn't the same")
             await message_channel.send(message)
-        else:
-            print("is the same")
-            print(message.strip().lower())
-            print("-------")
 @send_new.before_loop
 async def before():
     await client.wait_until_ready()
