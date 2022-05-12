@@ -10,7 +10,7 @@ from commandsText.frontend import frontend
 from commandsText.backend import backend
 from commandsText.quotes import mr_robot_quotes
 from getMemes import getMemes
-from getNews import message
+from getNews import getNews
 from getCourses import getCourses
 
 helpVar = help
@@ -82,18 +82,19 @@ async def before():
 # Send news
 @tasks.loop(minutes=1)
 async def send_new():
+    new = getNews()
     message_channel = client.get_channel(newsChannel)
     messages = await message_channel.history(limit=1).flatten()
     for i in messages:
         # Prevent the same news from being sent
-        if(i.content.strip().lower() != message.strip().lower()):
-            await message_channel.send(message)
+        if(i.content.strip().lower() != new.strip().lower()):
+            await message_channel.send(new)
 @send_new.before_loop
 async def before():
     await client.wait_until_ready()
 
 # Send a free course every 10 minutes
-@tasks.loop(seconds=10)
+@tasks.loop(minutes=10)
 async def send_course():
     responseCourse = getCourses()
     message_channel = client.get_channel(coursesChannel)

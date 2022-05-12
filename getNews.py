@@ -6,14 +6,18 @@ headers = {
 }
 
 url = "https://www.xataka.com/"
-answer = requests.get(url, headers = headers)
-soup = BeautifulSoup(answer.text, "html.parser")
+def getNews():
+    print("Get new")
+    answer = requests.get(url, headers = headers)
+    soup = BeautifulSoup(answer.text, "html.parser")
 
-title = soup.find("h2", itemprop="headline").text
-description = soup.find("div", itemprop="description").text
-link = soup.find("div", itemprop="description").find("a")["href"]
+    title = soup.find("h2", itemprop="headline").text
+    description = soup.find("div", itemprop="description").text
+    link = soup.find("div", itemprop="description").find("a")["href"]
 
-message = f"""
-**{title}**
-{description} {link}
-"""
+    message = f"""
+    **{title}**
+    {description} {link}
+    """
+
+    return message
