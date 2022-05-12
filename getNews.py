@@ -7,7 +7,6 @@ headers = {
 
 url = "https://www.xataka.com/"
 def getNews():
-    print("Get new")
     answer = requests.get(url, headers = headers)
     soup = BeautifulSoup(answer.text, "html.parser")
 
