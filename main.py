@@ -1,6 +1,4 @@
 import asyncio
-import threading
-from time import sleep
 import discord
 from discord.ext import commands, tasks
 import random
@@ -19,6 +17,10 @@ helpVar = help
 programacionVar = programacion
 frontendVar = frontend
 backendVar = backend
+
+memesChannel = 866425056938164234
+newsChannel = 974118263640440852
+coursesChannel = 865292924824322138
 
 client = commands.Bot(command_prefix='_', description="Fsociety Bot", help_command=None)
 
@@ -71,38 +73,42 @@ async def on_message(message):
 # Send a meme every 5 hours
 @tasks.loop(hours=5)
 async def send_meme():
-    message_channel = client.get_channel(874641359242412092)
+    message_channel = client.get_channel(memesChannel)
     await message_channel.send(getMemes())
 @send_meme.before_loop
 async def before():
     await client.wait_until_ready()
 
 # Send news
-@tasks.loop(minutes=5)
+@tasks.loop(minutes=1)
 async def send_new():
-    message_channel = client.get_channel(874641359242412092)
+    message_channel = client.get_channel(newsChannel)
     messages = await message_channel.history(limit=1).flatten()
     for i in messages:
         # Prevent the same news from being sent
         if(i.content.strip().lower() != message.strip().lower()):
+            print("isn't the same")
             await message_channel.send(message)
+        else:
+            print("is the same")
+            print(message.strip().lower())
+            print("-------")
 @send_new.before_loop
 async def before():
     await client.wait_until_ready()
 
-# Send a free course every 24 minutes
-@tasks.loop(hours=24)
+# Send a free course every 10 minutes
+@tasks.loop(minutes=10)
 async def send_course():
     responseCourse = getCourses()
-    message_channel = client.get_channel(874641359242412092)
+    message_channel = client.get_channel(coursesChannel)
     for res in responseCourse["results"]:
         freeCourse = f"""
-        **CURSO GRATIS**\n
-        {res["title"]}
-        https://udemy.com{res["url"]}
+**CURSO GRATIS**\n
+{res["title"]}
+https://udemy.com{res["url"]}
         """
         await message_channel.send(freeCourse)
-        await asyncio.sleep(1440)
 @send_course.before_loop
 async def before():
     await client.wait_until_ready()
@@ -111,36 +117,19 @@ async def before():
 @client.event
 async def on_ready():
     print("""
-⣿⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⣛⣛⣛⣛⣛⣛⣛⣛⡛⠛⠛⠛⠛⠛⠛⠛⠛⠛⣿
-⣿⠀⠀⠀⠀⢀⣠⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣦⣤⣀⠀⠀⠀⠀⣿
-⣿⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⡀⠀⣿
-⣿⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣤⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⠀⠈⢻⣿⠿⠛⠛⠛⠛⠛⢿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠛⠛⠛⠻⣿⣿⠋⠀⣿
-⣿⠛⠁⢸⣥⣴⣾⣿⣷⣦⡀⠀⠈⠛⣿⣿⠛⠋⠀⢀⣠⣾⣿⣷⣦⣤⡿⠈⢉⣿
-⣿⢋⣩⣼⡿⣿⣿⣿⡿⠿⢿⣷⣤⣤⣿⣿⣦⣤⣴⣿⠿⠿⣿⣿⣿⢿⣷⣬⣉⣿
-⣿⣿⣿⣿⣷⣿⡟⠁⠀⠀⠀⠈⢿⣿⣿⣿⢿⣿⠋⠀⠀⠀⠈⢻⣿⣧⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣥⣶⣶⣶⣤⣴⣿⡿⣼⣿⡿⣿⣇⣤⣴⣶⣶⣾⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⡿⢛⣿⣿⣿⣿⣿⣿⡿⣯⣾⣿⣿⣿⣮⣿⣿⣿⣿⣿⣿⣿⡟⠿⣿⣿⣿
-⣿⣿⡏⠀⠸⣿⣿⣿⣿⣿⠿⠓⠛⢿⣿⣿⡿⠛⠛⠻⢿⣿⣿⣿⣿⡇⠀⠹⣿⣿
-⣿⣿⡁⠀⠀⠈⠙⠛⠉⠀⠀⠀⠀⠀⠉⠉⠀⠀⠀⠀⠀⠈⠙⠛⠉⠀⠀⠀⣿⣿
-⣿⠛⢇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡸⠛⣿
-⣿⠀⠈⢳⣶⣤⣤⣤⣤⡄⠀⠀⠠⠤⠤⠤⠤⠤⠀⠀⢀⣤⣤⣤⣤⣴⣾⠃⠀⣿
-⣿⠀⠀⠈⣿⣿⣿⣿⣿⣿⣦⣀⡀⠀⠀⠀⠀⠀⣀⣤⣾⣿⣿⣿⣿⣿⠇⠀⠀⣿
-⣿⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⣿
-⣿⠀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀⣿
-⣿⠀⠀⠀⠀⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠁⠀⠀⠀⠀⣿
-⣿⠀⠀⠀⠀⠀⠀⠈⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⣿
-⠛⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠛⠛⠛⠉⠉⠛⠛⠛⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠛
-⠀⠀⠀⣶⡶⠆⣴⡿⡖⣠⣾⣷⣆⢠⣶⣿⣆⣶⢲⣶⠶⢰⣶⣿⢻⣷⣴⡖⠀⠀
-⠀⠀⢠⣿⣷⠂⠻⣷⡄⣿⠁⢸⣿⣿⡏⠀⢹⣿⢸⣿⡆⠀⣿⠇⠀⣿⡟⠀⠀⠀
-⠀⠀⢸⣿⠀⠰⣷⡿⠃⠻⣿⡿⠃⠹⣿⡿⣸⡏⣾⣷⡆⢠⣿⠀⠀⣿⠃⠀⠀⠀⠀⠀
+   *           (                          
+ (  `          )\ )         )          )  
+ )\))(   (    (()/(      ( /(       ( /(  
+((_)()\  )(    /(_)) (   )\())  (   )\()) 
+(_()((_)(()\  (_))   )\ ((_)\   )\ (_))/  
+|  \/  | ((_) | _ \ ((_)| |(_) ((_)| |_   
+| |\/| || '_| |   // _ \| '_ \/ _ \|  _|  
+|_|  |_||_|   |_|_\\___/|_.__/\___/ \__|  
     """)
     # Change bot status
-    await client.change_presence(activity=discord.Game(name="Hacking..."))
+    await client.change_presence(status=discord.Status.idle, activity=discord.Game(name="Hacking..."))
     
     send_course.start()
-    # threading.Thread(target=asyncio.run, args=(send_course(),)).start()
     send_new.start()
     send_meme.start()
 client.run(token)

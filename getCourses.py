@@ -1,8 +1,10 @@
 import requests
 from utilities.variables import udemyApiAuthorization
+from random import randint
 
 def getCourses():
-    url = "https://www.udemy.com/api-2.0/courses/?page=1&page_size=100&price=price-free"
+    page = randint(1, 10000) # get a random course
+    url = f"https://www.udemy.com/api-2.0/courses/?page={page}&page_size=1&price=price-free"
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Authorization": udemyApiAuthorization,
